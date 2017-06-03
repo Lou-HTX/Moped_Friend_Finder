@@ -1,11 +1,15 @@
 {
   "name": "moped_friend_finder",
   "version": "1.0.0",
-  "description": "Moped friend finding app.  Connect with moped friends who share the same moped intrests as you.",
+  "description": "Moped friend match app.",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lou-HTX/Moped_Friend_Finder.git"
   },
   "keywords": [
     "moped",
@@ -14,9 +18,12 @@
   ],
   "author": "Lou-HTX",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lou-HTX/Moped_Friend_Finder/issues"
+  },
+  "homepage": "https://github.com/Lou-HTX/Moped_Friend_Finder#readme",
   "dependencies": {
     "body-parser": "^1.17.2",
-    "express": "^4.15.3",
-    "path": "^0.12.7"
+    "express": "^4.15.3"
   }
 }
