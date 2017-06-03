@@ -1,58 +1,58 @@
-// Import friend data.
-var friendData = require('../data/friends.js');
+var friends = require('../data/friends.js');
+var path = require('path');
 
-module.exports = function(app) {
+// API GET Requests - when users "visit" a page. 
+// (ex:localhost:PORT/api/admin...they are shown a JSON of the data in the table) 
 
-    // GET route for /api/friends returns friendData.
-    app.get('/api/friends', function(req, res) {
-        res.json(friendData);
+var totalDifference = 0;
+
+module.exports = function (app) {
+    app.get('/api/friends', function (req, res) {
+        res.json(friends);
     });
 
-    // POST route for /api/friends takes in the new data and responds with the most compatible match.
-    app.post('/api/friends', function(req, res) {
-        // Our user is the data sent in the request.
-        var thisUser = req.body;
-        var differences = [];
+    //API POST Request-handles when user submits a form & thus submits data to the server.
+    // In each of the below cases, when a user submits form data (a JSON object)
+    // ...the JSON is pushed to the appropriate Javascript array
 
-        // If there is more than one friend to compare to,
-        if (friendData.length > 1) {
-            // Step through these potential friends.
-            friendData.forEach(function(user) {
-                var totalDifference = 0;
 
-                // For each answer, compare the answers and add the absolute value of the difference to the total difference.
-                for (var i = 0; i < thisUser.answers.length; i++) {
-                    var otherAnswer = user.answers[i];
-                    var thisAnswer = thisUser.answers[i];
-                    var difference = +otherAnswer - +thisAnswer;
-                    totalDifference += Math.abs(difference);
-                }
+    app.post('/api/friends', function (req, res) {
 
-                differences.push(totalDifference);
-            });
+        var greatMatch = {
+            name: "",
+            image: "",
+            matchDifference: 1000
+        };
+        var usrData = req.body;
+        var usrName = usrData.name;
+        var usrImage = usrData.image;
+        var usrScores = usrData.scores;
 
-            // Find the minimum difference score.
-            var minimumDifference = Math.min.apply(null, differences);
+        var totalDifference = 0;
 
-            // Since there may be more than one potential friend with that score, create an array.
-            var bestMatches = [];
+        //loop through the friends data array of objects to get each friends scores
+        for (var i = 0; i < [friends].length - 1; i++) {
+            console.log(friends[i].name);
+            totalDifference = 0;
 
-            // For each item in differences, if it is equal to the minimumDifference, add the corresponding friendData to the bestMatches array.
-            for (var i = 0; i < differences.length; i++) {
-                if (differences[i] === minimumDifference) {
-                    bestMatches.push(friendData[i]);
+            //loop through that friends score and the users score and calculate the 
+            // absolute difference between the two and push that to the total difference variable set above
+            for (var j = 0; j < 10; j++) {
+                // We calculate the difference between the scores and sum them into the totalDifference
+                totalDifference += Math.abs(parseInt(usrScores[j]) - parseInt(friends[i].scores[j]));
+                // If the sum of differences is less then the differences of the current "best match"
+                if (totalDifference <= greatMatch.friendDifference) {
+
+                    // Reset the bestMatch to be the new friend. 
+                    greatMatch.name = friends[i].name;
+                    greatMatch.photo = friends[i].photo;
+                    greatMatch.matchDifference = totalDifference;
                 }
             }
-
-            // Then send bestMatches to the client.
-            res.json(bestMatches);
-        // If there is only one friend to compare to, skip all that work and just send back that friend.
-        } else {
-            res.json(friendData);
         }
 
-        // Once you're done comparing, add the new user to the potential friends data.
-        friendData.push(thisUser);
+        friends.push(usrData);
 
+        res.json(greatMatch);
     });
 };
